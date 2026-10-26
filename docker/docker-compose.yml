@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: secretpassword
       POSTGRES_DB: ecommerce_db
     ports:
-      - "5432:5432"
+      - "5436:5436"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
