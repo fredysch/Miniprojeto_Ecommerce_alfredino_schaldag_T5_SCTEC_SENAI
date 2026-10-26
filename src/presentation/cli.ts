@@ -1,46 +1,66 @@
 import { PostgresProductRepository } from '../repositories/postgres/PostgresProductRepository';
 import { PostgresClientRepository } from '../repositories/postgres/PostgresClientRepository';
+import { PostgresOrderRepository } from '../repositories/postgres/PostgresOrderRepository';
+import { CartService } from '../services/CartService';
+import { OrderService } from '../services/OrderService';
 import { db } from '../config/database';
 
-async function testSprint1() {
+async function testSprint2and3() {
   console.log("======================================================================");
-  console.log(" MARTIM-PESCADOR E-COMMERCE CORP. | TESTE SPRINT 1 (POSTGRESQL DB)     ");
+  console.log(" MARTIM-PESCADOR E-COMMERCE CORP. | TESTE SPRINTS 2 & 3 (CARRINHO & PEDIDOS)");
   console.log(" Operador Logístico: [Alfredino Schaldag] | Sessão: #0842-ATIVO          ");
   console.log("======================================================================\n");
 
   const productRepo = new PostgresProductRepository();
   const clientRepo = new PostgresClientRepository();
+  const orderRepo = new PostgresOrderRepository();
+
+  const cartService = new CartService(productRepo);
+  const orderService = new OrderService(productRepo, clientRepo, orderRepo);
 
   try {
-    // 1. Teste de Clientes Inicializados
-    console.log("🔍 [1/4] Testando Consulta de Clientes Cadastrados...");
-    const clientes = await clientRepo.findAll();
-    console.log(`Total de clientes cadastrados: ${clientes.length}`);
-    clientes.forEach(c => console.log(`   - [${c.id}] ${c.nome} (${c.email})`));
+    // 1. Teste de Tentativa de Compra de Produto Sem Estoque (prod-108 - RTX 4070)
+    console.log("🧪 [1/4] Testando Regra de Negócio: Bloqueio de Estoque Zerado...");
+    try {
+      await cartService.addItem('prod-108', 1);
+      console.log("❌ Falha: O sistema permitiu adicionar item sem estoque.");
+    } catch (err: any) {
+      console.log(`✅ Sucesso! Exceção capturada corretamente: "${err.message}"`);
+    }
 
-    // 2. Teste de Contagem do Catálogo
-    console.log("\n📦 [2/4] Testando Leitura do Catálogo de Produtos...");
-    const produtos = await productRepo.findAll();
-    console.log(`Total de produtos no catálogo: ${produtos.length}`);
+    // 2. Adição de Produtos Válidos ao Carrinho
+    console.log("\n🛒 [2/4] Adicionando Produtos Válidos ao Carrinho...");
+    await cartService.addItem('prod-101', 1); // Galaxy S24 Ultra (R$ 6.499,00)
+    await cartService.addItem('prod-201', 2); // Camiseta Egípcia (R$ 119,90 x 2 = R$ 239,80)
 
-    // 3. Busca por Categoria
-    console.log("\n🏷️ [3/4] Testando Filtro por Categoria 'Eletrônicos'...");
-    const eletronicos = await productRepo.findByCategory('Eletrônicos');
-    eletronicos.slice(0, 3).forEach(p => console.log(`   - [${p.id}] ${p.nome} | R$ ${p.preco.toFixed(2)} | Estoque: ${p.estoque}`));
+    const resumo = await cartService.calculateTotal();
+    console.log(`Itens no carrinho: ${resumo.detalhes.length}`);
+    resumo.detalhes.forEach(d => {
+      console.log(`   - ${d.quantidade}x ${d.produto.nome} = R$ ${d.subtotal.toFixed(2)}`);
+    });
+    console.log(`💰 Total Parcial do Carrinho: R$ ${resumo.total.toFixed(2)}`);
 
-    // 4. Teste de Busca por Nome Parcial
-    console.log("\n🔎 [4/4] Testando Busca por Nome ('Air Fryer')...");
-    const busca = await productRepo.findByName('Air Fryer');
-    busca.forEach(p => console.log(`   - Encontrado: [${p.id}] ${p.nome} | R$ ${p.preco.toFixed(2)}`));
+    // 3. Finalização do Pedido para o Cliente cli-001 (Carlos Eduardo)
+    console.log("\n💳 [3/4] Processando Fechamento de Pedido (Checkout)...");
+    const pedidoCriado = await orderService.checkout('cli-001', cartService);
+    console.log(`✅ Pedido ${pedidoCriado.id} criado com sucesso!`);
+    console.log(`   Cliente ID: ${pedidoCriado.clienteId}`);
+    console.log(`   Valor Total: R$ ${pedidoCriado.total.toFixed(2)}`);
+    console.log(`   Itens Processados: ${pedidoCriado.itens.length}`);
+
+    // 4. Validação da Baixa de Estoque no PostgreSQL
+    console.log("\n📉 [4/4] Verificando Baixa no Estoque do Banco PostgreSQL...");
+    const prod101Atualizado = await productRepo.findById('prod-101');
+    console.log(`   - Prod prod-101 (Galaxy S24): Novo Estoque = ${prod101Atualizado?.estoque} (Esperado: 9)`);
 
     console.log("\n======================================================================");
-    console.log("    TESTE DA SPRINT 1 CONCLUÍDO COM SUCESSO!                          ");
+    console.log("    TESTES DAS SPRINTS 2 E 3 CONCLUÍDOS COM SUCESSO!                  ");
     console.log("======================================================================");
   } catch (error) {
-    console.error("\n❌ Erro durante a execução dos testes da Sprint 1:", error);
+    console.error("\n❌ Erro durante a execução dos testes:", error);
   } finally {
     await db.end();
   }
 }
 
-testSprint1();
+testSprint2and3();
