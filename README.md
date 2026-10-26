@@ -115,11 +115,14 @@ Plaintext
 1. 🛒 Listar Catálogo de Produtos
 2. 🔍 Filtrar Produtos por Categoria
 3. ➕ Adicionar Item ao Carrinho
-4. 🛍️ Ver Carrinho & Total
-5. 💳 Finalizar Compra (Checkout)
-6. 📜 Historico de Pedidos do Cliente
-7. 👤 Alternar Cliente Ativo
+4. ✏️ Alterar Quantidade de Item no Carrinho
+5. 🗑️ Remover Item do Carrinho
+6. 🛍️ Ver Carrinho & Total (Subtotais)
+7. 💳 Finalizar Compra (Checkout)
+8. 📜 Histórico de Pedidos do Cliente
+9. 👤 Alternar Cliente Ativo
 0. 🚪 Sair
+
 ----------------------------------------------------------------------
 Selecione uma opção: 3
 
