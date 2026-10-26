@@ -13,6 +13,8 @@ Aplicação interativa de Terminal (CLI) para gerenciamento de catálogo, carrin
 
 O projeto segue os princípios da **Clean Architecture** e **Domain-Driven Design (DDD)**, mantendo estrita separação de responsabilidades em camadas:
 
+```text
+
 mini_projeto_ecommerce/
 ├── docker/
 │   ├── docker-compose.yml                  # Configuração da infraestrutura do PostgreSQL
@@ -38,6 +40,8 @@ mini_projeto_ecommerce/
 ├── package-lock.json                           # Trava de versões das dependências
 ├── README.md                                   # Documentação completa do projeto
 └── tsconfig.json                               # Configurações do compilador TypeScript
+
+```text
 
 ### 💡 Principais Diferenciais e Regras de Negócio
 
