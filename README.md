@@ -17,22 +17,22 @@ O projeto segue os princípios da **Clean Architecture** e **Domain-Driven Desig
 
 mini_projeto_ecommerce/
 ├── docker/
-│   ├── docker-compose.yml                  # Configuração da infraestrutura do PostgreSQL
+│   ├── docker-compose.yml                      # Configuração da infraestrutura do PostgreSQL
 │   └── postgres/
-│       └── init.sql                        # Script DDL/DML de criação de tabelas e carga inicial
+│       └── init.sql                            # Script DDL/DML de criação de tabelas e carga inicial
 ├── src/
 │   ├── @types/
-│   │   └── index.ts                         # Definição de Interfaces TypeScript (Cliente, Produto, Pedido, etc.)
+│   │   └── index.ts                            # Definição de Interfaces TypeScript (Cliente, Produto, Pedido, etc.)
 │   ├── config/
-│   │   └── database.ts                       # Pool de conexão parametrizado com o PostgreSQL (pg)
+│   │   └── database.ts                         # Pool de conexão parametrizado com o PostgreSQL (pg)
 │   ├── repositories/
 │   │   └── postgres/
-│   │       ├── PostgresClientRepository.ts   # Consultas SQL para clientes
-│   │       ├── PostgresProductRepository.ts  # Consultas SQL para produtos e categorias
-│   │       └── PostgresOrderRepository.ts    # Transações SQL (BEGIN/COMMIT) para pedidos
+│   │       ├── PostgresClientRepository.ts     # Consultas SQL para clientes
+│   │       ├── PostgresProductRepository.ts    # Consultas SQL para produtos e categorias
+│   │       └── PostgresOrderRepository.ts      # Transações SQL (BEGIN/COMMIT) para pedidos
 │   ├── services/
-│   │   ├── CartService.ts                     # Lógica de negócio do carrinho e controle de estoque
-│   │   └── OrderService.ts                    # Lógica de checkout, congelamento de preços e validações
+│   │   ├── CartService.ts                      # Lógica de negócio do carrinho e controle de estoque
+│   │   └── OrderService.ts                     # Lógica de checkout, congelamento de preços e validações
 │   └── presentation/
 │       └── cli.ts                              # Interface CLI interativa via terminal (Readline)
 ├── .gitignore                                  # Arquivos ignorados pelo Git (node_modules, etc.)
