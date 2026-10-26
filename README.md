@@ -22,11 +22,14 @@ O objetivo desta aplicação é fornecer uma plataforma de e-commerce via interf
 ## ⚙️ Funcionalidades Implementadas
 
 * **Consulta ao Catálogo de Produtos:** Listagem geral de produtos e filtros por categorias (Eletrônicos, Vestuário, Livros, Calçados).
-* **Gerenciamento do Carrinho de Compras:** Adição de itens, alteração/acumulo de quantidades e cálculo de subtotal por item e total geral.
-* **Processamento de Checkout Relacional:** Fechamento de compras com criação de registro de pedido e itens de pedido no banco de dados.
-* **Gestão de Clientes:** Listagem dos clientes cadastrados e alternância de sessão ativa entre clientes.
-* **Histórico de Compras:** Consulta detalhada aos pedidos finalizados por cliente com exibição de itens e valores históricos.
-* **Infraestrutura Conteinerizada:** Subida automática do banco de dados PostgreSQL com carga SQL de inicialização (`init.sql`).
+* **Gerenciamento do Carrinho de Compras:** 
+  * Adicionar um produto ao carrinho.
+  * Remover um produto do carrinho.
+  * Alterar a quantidade de um produto específico.
+  * Listar os itens do carrinho (cada item contendo ID e quantidade).
+  * Calcular o subtotal por item e o valor total geral da compra.
+* **Processamento de Checkout Relacional:** Fechamento de compras com criação de pedido e baixa atômica no estoque via PostgreSQL.
+* **Gestão de Clientes & Histórico:** Alternância de clientes e consulta ao histórico de pedidos com preços históricos congelados.
 
 ---
 

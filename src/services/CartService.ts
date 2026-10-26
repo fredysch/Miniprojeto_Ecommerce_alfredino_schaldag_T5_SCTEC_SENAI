@@ -6,6 +6,9 @@ export class CartService {
 
   constructor(private productRepo: PostgresProductRepository) {}
 
+  /**
+   * Adiciona um produto ao carrinho ou acumula a quantidade se já existir.
+   */
   async addItem(produtoId: string, quantidade: number): Promise<void> {
     if (quantidade <= 0) {
       throw new Error('A quantidade deve ser maior que zero.');
@@ -13,7 +16,7 @@ export class CartService {
 
     const produto = await this.productRepo.findById(produtoId);
     if (!produto) {
-      throw new Error(`Produto com ID ${produtoId} não foi encontrado.`);
+      throw new Error(`Produto com ID "${produtoId}" não foi encontrado.`);
     }
 
     const itemExistente = this.itens.find(item => item.produtoId === produtoId);
@@ -33,24 +36,67 @@ export class CartService {
     }
   }
 
-  removeItem(produtoId: string): boolean {
-    const idx = this.itens.findIndex(item => item.produtoId === produtoId);
-    if (idx !== -1) {
-      this.itens.splice(idx, 1);
-      return true;
+  /**
+   * Remove completamente um produto do carrinho pelo ID.
+   */
+  removeItem(produtoId: string): void {
+    const index = this.itens.findIndex(item => item.produtoId === produtoId);
+    if (index === -1) {
+      throw new Error(`Produto com ID "${produtoId}" não está presente no carrinho.`);
     }
-    return false;
+    this.itens.splice(index, 1);
   }
 
-  clear(): void {
-    this.itens = [];
+  /**
+   * Altera diretamente a quantidade de um produto específico no carrinho.
+   */
+  async updateItemQuantity(produtoId: string, novaQuantidade: number): Promise<void> {
+    if (novaQuantidade <= 0) {
+      // Se a quantidade informada for zero ou negativa, remove o item
+      this.removeItem(produtoId);
+      return;
+    }
+
+    const produto = await this.productRepo.findById(produtoId);
+    if (!produto) {
+      throw new Error(`Produto com ID "${produtoId}" não foi encontrado.`);
+    }
+
+    if (novaQuantidade > produto.estoque) {
+      throw new Error(
+        `Estoque insuficiente para o produto "${produto.nome}". Disponível: ${produto.estoque}, Solicitado: ${novaQuantidade}`
+      );
+    }
+
+    const item = this.itens.find(item => item.produtoId === produtoId);
+    if (!item) {
+      throw new Error(`Produto com ID "${produtoId}" não encontrado no carrinho.`);
+    }
+
+    item.quantidade = novaQuantidade;
   }
 
+  /**
+   * Retorna a lista de itens do carrinho contendo identificador e quantidade.
+   */
   getItems(): ItemCarrinho[] {
     return [...this.itens];
   }
 
-  async calculateTotal(): Promise<{ total: number; detalhes: Array<{ produto: Produto; quantidade: number; subtotal: number }> }> {
+  /**
+   * Esvazia completamente o carrinho.
+   */
+  clear(): void {
+    this.itens = [];
+  }
+
+  /**
+   * Calcula o subtotal de cada item e o valor total geral da compra.
+   */
+  async calculateTotal(): Promise<{
+    total: number;
+    detalhes: Array<{ produto: Produto; quantidade: number; subtotal: number }>;
+  }> {
     let total = 0;
     const detalhes = [];
 
