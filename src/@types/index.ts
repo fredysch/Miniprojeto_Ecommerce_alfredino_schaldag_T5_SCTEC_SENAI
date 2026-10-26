@@ -1,4 +1,4 @@
-export type CategoriaProduto = 'Eletrônicos' | 'Vestuário' | 'Alimentação' | 'Outros';
+export type CategoriaProduto = 'Eletrônicos' | 'Vestuário' | 'Eletrodomésticos' | 'Perfumaria' | 'Outros';
 
 export interface Produto {
   id: string;
