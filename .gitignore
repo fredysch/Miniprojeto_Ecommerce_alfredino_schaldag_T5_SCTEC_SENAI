@@ -1,0 +1,18 @@
+# Dependências
+node_modules/
+
+# Compilação
+dist/
+
+# Ambientes e Variáveis Secretas
+.env
+*.local
+
+# Logs e Dados do Docker/Banco
+*.log
+.pgdata/
+
+# Sistema Operacional / IDEs
+.DS_Store
+.vscode/
+.idea/
